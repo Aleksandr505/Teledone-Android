@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.teledoneandroid.ui.theme.TeledoneAndroidTheme
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,11 +53,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ComposeTeledoneApp() {
-    Column {
+    var countTasks by remember { mutableStateOf(0) }
+
+    Column (modifier = Modifier.background(Color.White)) {
         TopPanel(modifier = Modifier.weight(0.1f))
         MainPanel(modifier = Modifier.weight(0.1f))
-        InfoPanel(modifier = Modifier.weight(0.6f))
-        NewTaskPanel(modifier = Modifier.weight(0.1f).align(Alignment.End))
+        InfoPanel(countTasks, modifier = Modifier.weight(0.6f))
+        NewTaskPanel(onButtonClick = { countTasks++ }, modifier = Modifier
+            .weight(0.1f)
+            .align(Alignment.End))
         CategoryPanel(modifier = Modifier.weight(0.1f))
     }
 }
@@ -141,22 +151,25 @@ fun MainPanel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun InfoPanel(modifier: Modifier = Modifier) {
+fun InfoPanel(countTasks: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(Color.White)
+            .fillMaxSize()
     ) {
-        Task()
-        Task()
-        Task()
+        repeat(countTasks) {
+            Task()
+        }
     }
 }
 
 @Composable
-fun NewTaskPanel(modifier: Modifier = Modifier) {
-    Row(modifier = modifier) {
+fun NewTaskPanel(onButtonClick: () -> Unit ,modifier: Modifier = Modifier) {
+    Box(modifier = modifier
+        .background(Color.White)
+    ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onButtonClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             modifier = Modifier
                 .fillMaxHeight(),
@@ -170,6 +183,7 @@ fun NewTaskPanel(modifier: Modifier = Modifier) {
                 )
             }
         )
+
     }
 }
 
