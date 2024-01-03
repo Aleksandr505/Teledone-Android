@@ -39,6 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.teledoneandroid.ui.theme.TeledoneAndroidTheme
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
@@ -49,7 +51,7 @@ class MainActivity : ComponentActivity() {
             TeledoneAndroidTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    ComposeTeledoneApp()
+                    Navigation()
                 }
             }
         }
@@ -57,8 +59,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ComposeTeledoneApp() {
-    val context = LocalContext.current
+fun ComposeTeledoneApp(navController: NavController, title: String?) {
     var countTasks by remember { mutableStateOf(0) }
 
     Column (
@@ -68,10 +69,10 @@ fun ComposeTeledoneApp() {
     ) {
         TopPanel(modifier = Modifier.weight(0.1f))
         MainPanel(modifier = Modifier.weight(0.1f))
-        InfoPanel(countTasks, modifier = Modifier.weight(0.6f))
+        InfoPanel(title, modifier = Modifier.weight(0.6f))
         NewTaskPanel(
             onButtonClick = {
-                context.startActivity(Intent(context, NewTaskActivity::class.java))
+                navController.navigate(Screen.NewTaskScreen.route)
                             },
             modifier = Modifier
                 .weight(0.1f)
@@ -165,15 +166,15 @@ fun MainPanel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun InfoPanel(countTasks: Int, modifier: Modifier = Modifier) {
+fun InfoPanel(title: String?, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(Color.White)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        repeat(countTasks) {
-            Task()
+        if (title != null) {
+            Task(title)
         }
     }
 }
@@ -240,7 +241,7 @@ fun CategoryPanel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Task(modifier: Modifier = Modifier) {
+fun Task(title:String, modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
             .padding(8.dp)
@@ -257,8 +258,8 @@ fun Task(modifier: Modifier = Modifier) {
                 .weight(0.7f)
                 .padding(8.dp)
         ) {
-            Text(text = "Task name")
-            Text(text = "date")
+            Text(text = title)
+            Text(text = "here will be date")
         }
     }
 }
@@ -267,6 +268,6 @@ fun Task(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     TeledoneAndroidTheme {
-        ComposeTeledoneApp()
+        //ComposeTeledoneApp()
     }
 }
