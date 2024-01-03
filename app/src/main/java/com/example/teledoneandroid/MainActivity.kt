@@ -1,5 +1,7 @@
 package com.example.teledoneandroid
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -30,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,15 +58,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ComposeTeledoneApp() {
+    val context = LocalContext.current
     var countTasks by remember { mutableStateOf(0) }
 
-    Column (modifier = Modifier.background(Color.White)) {
+    Column (
+        modifier = Modifier
+            .background(Color.White)
+            .verticalScroll(rememberScrollState())
+    ) {
         TopPanel(modifier = Modifier.weight(0.1f))
         MainPanel(modifier = Modifier.weight(0.1f))
         InfoPanel(countTasks, modifier = Modifier.weight(0.6f))
-        NewTaskPanel(onButtonClick = { countTasks++ }, modifier = Modifier
-            .weight(0.1f)
-            .align(Alignment.End))
+        NewTaskPanel(
+            onButtonClick = {
+                context.startActivity(Intent(context, NewTaskActivity::class.java))
+                            },
+            modifier = Modifier
+                .weight(0.1f)
+                .align(Alignment.End))
         CategoryPanel(modifier = Modifier.weight(0.1f))
     }
 }
@@ -156,6 +170,7 @@ fun InfoPanel(countTasks: Int, modifier: Modifier = Modifier) {
         modifier = modifier
             .background(Color.White)
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         repeat(countTasks) {
             Task()
@@ -164,7 +179,7 @@ fun InfoPanel(countTasks: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun NewTaskPanel(onButtonClick: () -> Unit ,modifier: Modifier = Modifier) {
+fun NewTaskPanel(onButtonClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier = modifier
         .background(Color.White)
     ) {
