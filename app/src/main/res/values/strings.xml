@@ -4,4 +4,8 @@
     <string name="task_title">Title</string>
     <string name="task_description">Description</string>
     <string name="task_save">Save</string>
+    <string name="task1">task1</string>
+    <string name="task2">task2</string>
+    <string name="task3">task3</string>
+    <string name="task4">task4</string>
 </resources>

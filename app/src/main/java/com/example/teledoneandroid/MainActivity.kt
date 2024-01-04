@@ -1,7 +1,5 @@
 package com.example.teledoneandroid
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,15 +8,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -31,18 +28,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.teledoneandroid.data.Datasource
+import com.example.teledoneandroid.model.Task
 import com.example.teledoneandroid.ui.theme.TeledoneAndroidTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +57,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ComposeTeledoneApp(navController: NavController, title: String?) {
     var countTasks by remember { mutableStateOf(0) }
+    val taskList = Datasource().loadTasks()
 
     Column (
         modifier = Modifier
@@ -69,7 +66,7 @@ fun ComposeTeledoneApp(navController: NavController, title: String?) {
     ) {
         TopPanel(modifier = Modifier.weight(0.1f))
         MainPanel(modifier = Modifier.weight(0.1f))
-        InfoPanel(title, modifier = Modifier.weight(0.6f))
+        InfoPanel(taskList, modifier = Modifier.weight(0.6f))
         NewTaskPanel(
             onButtonClick = {
                 navController.navigate(Screen.NewTaskScreen.route)
@@ -166,15 +163,14 @@ fun MainPanel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun InfoPanel(title: String?, modifier: Modifier = Modifier) {
-    Column(
+fun InfoPanel(tasksList: List<Task>, modifier: Modifier = Modifier) {
+    LazyColumn(
         modifier = modifier
             .background(Color.White)
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
     ) {
-        if (title != null) {
-            Task(title)
+        items(tasksList) { task ->
+            TaskComponent(task = task)
         }
     }
 }
@@ -241,7 +237,7 @@ fun CategoryPanel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Task(title:String, modifier: Modifier = Modifier) {
+fun TaskComponent(task: Task, modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
             .padding(8.dp)
@@ -258,7 +254,7 @@ fun Task(title:String, modifier: Modifier = Modifier) {
                 .weight(0.7f)
                 .padding(8.dp)
         ) {
-            Text(text = title)
+            Text(text = stringResource(id = task.title))
             Text(text = "here will be date")
         }
     }
@@ -268,6 +264,6 @@ fun Task(title:String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     TeledoneAndroidTheme {
-        //ComposeTeledoneApp()
+        CategoryPanel()
     }
 }

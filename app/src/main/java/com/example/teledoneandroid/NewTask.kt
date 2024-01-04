@@ -30,7 +30,7 @@ fun NewTaskLayout(navController: NavController, modifier: Modifier = Modifier) {
     ) {
         Row {
             Button(onClick = {
-                navController.navigate(Screen.MainScreen.withArgs(title))
+                navController.navigate(Screen.MainScreen.route + "?title=" + title)
             }) {
                 Text(text = stringResource(R.string.task_save))
             }
