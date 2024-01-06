@@ -28,8 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TeledoneAndroidTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(modifier = Modifier.fillMaxSize()) {
                     Navigation()
                 }
             }
@@ -55,16 +57,15 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ComposeTeledoneApp(navController: NavController, title: String?) {
+fun ComposeTeledoneApp(navController: NavController, title: String?, modifier: Modifier = Modifier) {
     var countTasks by remember { mutableStateOf(0) }
     val taskList = Datasource().loadTasks()
 
     Column (
-        modifier = Modifier
-            .background(Color.White)
+        modifier = modifier
             .verticalScroll(rememberScrollState())
     ) {
-        TopPanel(modifier = Modifier.weight(0.1f))
+        TopPanel(modifier = Modifier.weight(0.1f).background(MaterialTheme.colorScheme.primaryContainer))
         MainPanel(modifier = Modifier.weight(0.1f))
         InfoPanel(taskList, modifier = Modifier.weight(0.6f))
         NewTaskPanel(
@@ -74,7 +75,7 @@ fun ComposeTeledoneApp(navController: NavController, title: String?) {
             modifier = Modifier
                 .weight(0.1f)
                 .align(Alignment.End))
-        CategoryPanel(modifier = Modifier.weight(0.1f))
+        CategoryPanel(modifier = Modifier.weight(0.1f).background(MaterialTheme.colorScheme.primaryContainer))
     }
 }
 
@@ -82,7 +83,6 @@ fun ComposeTeledoneApp(navController: NavController, title: String?) {
 fun TopPanel(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .background(Color.Blue)
     ) {
         Column(modifier = Modifier
             .weight(0.6f)
@@ -90,12 +90,10 @@ fun TopPanel(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = "Home",
-                color = Color.White,
                 modifier = Modifier.padding(8.dp)
             )
             Text(
                 text = "Today",
-                color = Color.White,
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -122,7 +120,6 @@ fun TopPanel(modifier: Modifier = Modifier) {
 fun MainPanel(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .background(Color.White)
     ) {
         Image(
             painter = painterResource(id = R.drawable.icons8__96),
@@ -166,7 +163,6 @@ fun MainPanel(modifier: Modifier = Modifier) {
 fun InfoPanel(tasksList: List<Task>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
-            .background(Color.White)
             .fillMaxSize()
     ) {
         items(tasksList) { task ->
@@ -178,11 +174,9 @@ fun InfoPanel(tasksList: List<Task>, modifier: Modifier = Modifier) {
 @Composable
 fun NewTaskPanel(onButtonClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier = modifier
-        .background(Color.White)
     ) {
         Button(
             onClick = onButtonClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             modifier = Modifier
                 .fillMaxHeight(),
             content = {
@@ -192,6 +186,7 @@ fun NewTaskPanel(onButtonClick: () -> Unit, modifier: Modifier = Modifier) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxHeight()
+                        .clip(MaterialTheme.shapes.small)
                 )
             }
         )
@@ -203,7 +198,6 @@ fun NewTaskPanel(onButtonClick: () -> Unit, modifier: Modifier = Modifier) {
 fun CategoryPanel(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .background(Color.Blue)
     ) {
         Image(
             painter = painterResource(id = R.drawable.icons8__96),
@@ -240,30 +234,38 @@ fun CategoryPanel(modifier: Modifier = Modifier) {
 fun TaskComponent(task: Task, modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(dimensionResource(id = R.dimen.padding_small))
+            .clip(MaterialTheme.shapes.medium)
     ) {
         Checkbox(
             checked = false,
             onCheckedChange = null,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(dimensionResource(id = R.dimen.padding_small))
                 .align(Alignment.CenterVertically)
         )
         Column(
             modifier = Modifier
                 .weight(0.7f)
-                .padding(8.dp)
+                .padding(dimensionResource(id = R.dimen.padding_small))
         ) {
-            Text(text = stringResource(id = task.title))
-            Text(text = "here will be date")
+            Text(
+                text = stringResource(id = task.title),
+                style = MaterialTheme.typography.displayMedium
+            )
+            Text(
+                text = "here will be date",
+                style = MaterialTheme.typography.bodyLarge
+                )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun GreetingPreview() {
-    TeledoneAndroidTheme {
-        CategoryPanel()
+fun TeledonePreview() {
+    TeledoneAndroidTheme(darkTheme = false) {
+        ComposeTeledoneApp(navController = rememberNavController(), title = "test title")
+        //NewTaskLayout(navController = rememberNavController())
     }
 }

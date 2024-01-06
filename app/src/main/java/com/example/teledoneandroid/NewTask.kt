@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -40,13 +41,15 @@ fun NewTaskLayout(navController: NavController, modifier: Modifier = Modifier) {
             value = title,
             onValueChange = { title = it },
             singleLine = true,
-            label = { Text(text = stringResource(R.string.task_title)) }
+            label = { Text(text = stringResource(R.string.task_title)) },
+            shape = MaterialTheme.shapes.small
         )
         Spacer(modifier = Modifier.height(30.dp))
         TextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text(text = stringResource(R.string.task_description)) }
+            label = { Text(text = stringResource(R.string.task_description)) },
+            shape = MaterialTheme.shapes.medium
         )
     }
 }
