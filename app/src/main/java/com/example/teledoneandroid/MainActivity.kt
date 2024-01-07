@@ -3,21 +3,31 @@ package com.example.teledoneandroid
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -65,7 +75,9 @@ fun ComposeTeledoneApp(navController: NavController, title: String?, modifier: M
         modifier = modifier
             .verticalScroll(rememberScrollState())
     ) {
-        TopPanel(modifier = Modifier.weight(0.1f).background(MaterialTheme.colorScheme.primaryContainer))
+        TopPanel(modifier = Modifier
+            .weight(0.1f)
+            .background(MaterialTheme.colorScheme.primaryContainer))
         MainPanel(modifier = Modifier.weight(0.1f))
         InfoPanel(taskList, modifier = Modifier.weight(0.6f))
         NewTaskPanel(
@@ -75,7 +87,9 @@ fun ComposeTeledoneApp(navController: NavController, title: String?, modifier: M
             modifier = Modifier
                 .weight(0.1f)
                 .align(Alignment.End))
-        CategoryPanel(modifier = Modifier.weight(0.1f).background(MaterialTheme.colorScheme.primaryContainer))
+        CategoryPanel(modifier = Modifier
+            .weight(0.1f)
+            .background(MaterialTheme.colorScheme.primaryContainer))
     }
 }
 
@@ -232,33 +246,88 @@ fun CategoryPanel(modifier: Modifier = Modifier) {
 
 @Composable
 fun TaskComponent(task: Task, modifier: Modifier = Modifier) {
-    Row(
-        modifier = Modifier
-            .padding(dimensionResource(id = R.dimen.padding_small))
-            .clip(MaterialTheme.shapes.medium)
-    ) {
-        Checkbox(
-            checked = false,
-            onCheckedChange = null,
-            modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_small))
-                .align(Alignment.CenterVertically)
-        )
-        Column(
-            modifier = Modifier
-                .weight(0.7f)
-                .padding(dimensionResource(id = R.dimen.padding_small))
-        ) {
-            Text(
-                text = stringResource(id = task.title),
-                style = MaterialTheme.typography.displayMedium
-            )
-            Text(
-                text = "here will be date",
-                style = MaterialTheme.typography.bodyLarge
+    var expanded by remember { mutableStateOf(false) }
+    Column(
+        modifier = modifier
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
                 )
+            )
+            .padding(dimensionResource(id = R.dimen.padding_medium))
+            .clip(MaterialTheme.shapes.small)
+            .background(MaterialTheme.colorScheme.onSecondary)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(id = R.dimen.padding_medium))
+        ) {
+            Checkbox(
+                checked = false,
+                onCheckedChange = null,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .align(Alignment.CenterVertically)
+            )
+            Column(
+                modifier = Modifier
+                    .weight(0.7f)
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+            ) {
+                Text(
+                    text = stringResource(id = task.title),
+                    style = MaterialTheme.typography.displayMedium
+                )
+                Text(
+                    text = "here will be date",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            TaskItemButton(
+                expanded = expanded,
+                onClick = { expanded = !expanded }
+            )
+        }
+        if (expanded) {
+            TaskDetails(
+                "Details about task",
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            )
         }
     }
+}
+
+@Composable
+private fun TaskItemButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
+
+@Composable
+fun TaskDetails(
+    details: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = details,
+        style = MaterialTheme.typography.labelSmall,
+        modifier = modifier
+    )
 }
 
 @Preview
